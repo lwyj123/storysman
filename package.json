@@ -1,0 +1,30 @@
+{
+  "name": "storysman",
+  "version": "1.0.0",
+  "description": "a modern text game engine",
+  "main": "src/storysman.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "eslint": "./node_modules/.bin/eslint ./src/storysman.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lwyj123/storysman.git"
+  },
+  "keywords": [
+    "adventure",
+    "game",
+    "engine",
+    "text",
+    "adventure"
+  ],
+  "author": "lwio",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lwyj123/storysman/issues"
+  },
+  "homepage": "https://github.com/lwyj123/storysman#readme",
+  "devDependencies": {
+    "eslint": "^4.8.0"
+  }
+}
