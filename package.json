@@ -5,7 +5,8 @@
   "main": "src/storysman.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "eslint": "./node_modules/.bin/eslint ./src/storysman.js"
+    "eslint": "./node_modules/.bin/eslint ./src/storysman.js",
+    "build": "webpack --config build/webpack.base.conf.js"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,11 @@
   },
   "homepage": "https://github.com/lwyj123/storysman#readme",
   "devDependencies": {
-    "eslint": "^4.8.0"
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "eslint": "^4.8.0",
+    "json-loader": "^0.5.7",
+    "webpack": "^3.7.1"
   }
 }

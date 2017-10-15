@@ -1,3 +1,6 @@
-import Storysman from './core'
+import Storysman from './core/core.js'
+import packageJson from '../package.json'
 
-module.exports = Quill;
+
+window.Storysman = Storysman;
+Storysman.version = packageJson.version;
