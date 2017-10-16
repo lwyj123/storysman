@@ -25,19 +25,22 @@ const loadCss = function(options) {
   document.getElementsByTagName("head")[0].appendChild(node);
   option.mounted.call(null);
 
-  setTimeout(() => {
-    _pollCss(node, loaded, 0);
-  }, 20)
+  if("onload" in node) {
+    node.onload = option.loaded;
+  } else {
+    setTimeout(() => {
+      _pollCss(node, option.loaded, 0);
+    }, 0)
+  }
 }
 
 // for detect css onloaded or not(Old WebKit, Old Firefox)
 function _pollCss(node, callback, step) {
   // for WebKit < 536
   let isOldWebKit = navigator.userAgent.replace(/.*(?:AppleWebKit|AndroidWebKit)\/?(\d+).*/i, "$1") < 536;
-  let supportOnload = "onload" in node;
   let sheet = node.sheet;
   let isLoaded;
-  let pollLimit = 10;
+  let pollLimit = 30;
 
   step = step + 1;
   if(step > pollLimit) {
@@ -46,30 +49,25 @@ function _pollCss(node, callback, step) {
     return;
   }
 
-  if(isOldWebKit || !supportOnload) {
+  if(isOldWebKit) {
     if(sheet) {
       isLoaded = true;
     }
-  } else if(supportOnload) {
-    node.onload = function() {
-      callback.call(null);
-    }
-  } else {
-    node.onreadstatechange = function() {
-      if(/loaded|complete/.test(node.readyState)) {
-        callback.call(null);
-      }
+  } else if (node['sheet']) {
+    if (node['sheet'].cssRules) {
+      isLoaded = true;
     }
   }
 
-
-  setTimeout(function() {
-    if(isLoaded) {
+  if(isLoaded) {
+    setTimeout(function() {
       callback.call(null);
-    } else {
+    }, 10)
+  } else {
+    setTimeout(function() {
       _pollCss(node, callback, step)
-    }
-  })
+    }, 10)
+  }
 }
 
 export default loadCss;

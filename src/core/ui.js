@@ -1,3 +1,7 @@
+import config from '../../config'
+import gameJson from 'game/game.json'
+import { loadCss } from 'utils'
+
 const initUI = function (scene) {
   return applyPublicStylesheet()
     .then(loadAndRender.bind(this, scene))
@@ -5,9 +9,16 @@ const initUI = function (scene) {
 };
 
 const applyPublicStylesheet = function () {
-  return new Promise(function(resolve, reject) {
+  if(gameJson['style.css']) {
+    return new Promise(function(resolve, reject) {
+      loadCss({
+        url: gameJson['style.css']
+      })
+    })
+  } else {
+    return Promise.resolve();
+  }
 
-  })
 };
 
 
