@@ -17,7 +17,8 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.json'],
         alias: {
-            'game': resolve('game')
+            'game': resolve('game'),
+            'config': resolve('config')
         }
     },
     externals: {

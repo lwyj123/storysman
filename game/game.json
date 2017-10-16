@@ -5,37 +5,37 @@
       "filename": "cave.markdown",
       "type": "text/plain",
       "language": "Markdown",
-      "truncated": false,
+      "truncated": false
     },
     "city.markdown": {
       "filename": "city.markdown",
       "type": "text/plain",
       "language": "Markdown",
-      "truncated": false,
+      "truncated": false
     },
     "forest.markdown": {
       "filename": "forest.markdown",
       "type": "text/plain",
       "language": "Markdown",
-      "truncated": false,
+      "truncated": false
     },
     "index.markdown": {
       "filename": "index.markdown",
       "type": "text/plain",
       "language": "Markdown",
-      "truncated": false,
+      "truncated": false
     },
     "steal.markdown": {
       "filename": "steal.markdown",
       "type": "text/plain",
       "language": "Markdown",
-      "truncated": false,
+      "truncated": false
     },
     "style.css": {
       "filename": "style.css",
       "type": "text/css",
       "language": "CSS",
-      "truncated": false,
+      "truncated": false
     }
   },
   "public": true,

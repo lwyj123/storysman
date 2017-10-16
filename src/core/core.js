@@ -1,5 +1,7 @@
 import gameJson from 'game/game.json'
 
+import { getSceneContent } from './scene.js'
+
 class Storysman {
   constructor(name, age) {
     this.name = name;
@@ -25,6 +27,10 @@ var init = function () {
     });*/
 };
 Storysman.game = gameJson;
+
+
+
+Storysman.test = getSceneContent
 
 
 
