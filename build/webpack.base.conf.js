@@ -7,6 +7,7 @@ function resolve(dir) {
 var src = path.resolve(__dirname, '../src');
 
 module.exports = {
+    devtool: 'source-map',
     entry: {
         app: './src/storysman.js'
     },
@@ -22,6 +23,9 @@ module.exports = {
         }
     },
     externals: {
+    },
+    node: {
+        fs: 'empty'
     },
     module: {
         rules: [

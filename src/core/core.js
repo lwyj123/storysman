@@ -1,6 +1,6 @@
 import gameJson from 'game/game.json'
 
-import { getSceneContent } from './scene.js'
+import { runScene } from './scene.js'
 
 class Storysman {
   constructor(name, age) {
@@ -30,7 +30,7 @@ Storysman.game = gameJson;
 
 
 
-Storysman.test = getSceneContent
+Storysman.test = runScene
 
 
 
