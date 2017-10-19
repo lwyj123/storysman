@@ -56,15 +56,15 @@ const _getSceneContent = function (scene) {
   //var file = gameJson[files][fileName];
 
 
-  let fileURL = config.baseAddress + '/' + fileName;
+  let fileURL = '../' + config.baseAddress + '/' + fileName;
 
   return axios.get(fileURL)
 };
 
 // extract scene style from scene file's content
-const _extractYFM = function(scene, content) {
+const _extractYFM = function(scene, result) {
   // see the https://www.npmjs.com/package/yfm
-  var parsed = yfm(content);
+  var parsed = yfm(result.data);
   if (parsed.context.style !== undefined) {
     injectSceneStyle(scene, parsed.context.style);
   }
@@ -99,7 +99,7 @@ const _playTrack = function (parsed) {
       playSceneTrack(parsed.context.track);
     }
   }*/
-  return parsed;
+  return Promise.resolve(parsed);
 };
 
 const _updateGameState = function (parsed) {
