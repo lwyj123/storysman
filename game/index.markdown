@@ -1,5 +1,5 @@
-# An interactive story
+# A Demo
 
-This is an interactive story where you can choose what to do next.
+你发现你处于一个空白的房间里面，这里什么都没有只有一扇门.
 
-You can [explore the city](city) or you can [go to the forest](forest).
+你可以[打开这扇门](city)或者[四处逛逛(feature)](index).

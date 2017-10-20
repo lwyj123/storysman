@@ -15,10 +15,10 @@ style: |
   }
 ---
 
-A big and crowded city.
+一个山水很好的城市
 
-You have visited the city {{cityCounter}}.
+你已经来过 {{cityCounter}} 次了.
 
-![city](http://static1.squarespace.com/static/528737c1e4b0f296720a483e/54e8d963e4b0a0f14f947640/54e8d966e4b0a3ebc2bf9154/1424546152959/andy-rementer.jpg)
+![city](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1508507654231&di=98085002b7b084f102463a912124cef9&imgtype=0&src=http%3A%2F%2Fimg.yzcdn.cn%2Fupload_files%2F2015%2F07%2F16%2FFjhuXJ-2r0lHYnBUfC41neK58wtZ.jpg%2521580x580.jpg)
 
 Go [back](index).

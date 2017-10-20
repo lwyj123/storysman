@@ -1,32 +1,14 @@
 {
   "id": "testadsawd",
   "files": {
-    "cave.markdown": {
-      "filename": "cave.markdown",
-      "type": "text/plain",
-      "language": "Markdown",
-      "truncated": false
-    },
     "city.markdown": {
       "filename": "city.markdown",
       "type": "text/plain",
       "language": "Markdown",
       "truncated": false
     },
-    "forest.markdown": {
-      "filename": "forest.markdown",
-      "type": "text/plain",
-      "language": "Markdown",
-      "truncated": false
-    },
     "index.markdown": {
       "filename": "index.markdown",
-      "type": "text/plain",
-      "language": "Markdown",
-      "truncated": false
-    },
-    "steal.markdown": {
-      "filename": "steal.markdown",
       "type": "text/plain",
       "language": "Markdown",
       "truncated": false
