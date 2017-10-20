@@ -65,8 +65,22 @@ const _getSceneContent = function (scene) {
 const _extractYFM = function(scene, result) {
   // see the https://www.npmjs.com/package/yfm
   var parsed = yfm(result.data);
+  // clear the style before inject
+  removeStyle();
   if (parsed.context.style !== undefined) {
     injectSceneStyle(scene, parsed.context.style);
+  }
+  function removeStyle() {
+    let head = document.getElementsByTagName('head')[0];
+    let sceneStyles = []
+    for(let node of head.children) {
+      if(node.tagName === 'STYLE' && node.id.match(/-style$/)) {
+        sceneStyles.push(node);
+      }
+    }
+    for(let node of sceneStyles) {
+      head.removeChild(node);
+    }
   }
   function injectSceneStyle(scene, content) {
     let head = document.getElementsByTagName('head')[0];
