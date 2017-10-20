@@ -14,7 +14,9 @@ class Storysman {
 
 // TODO: add asynchronous load
 var init = function () {
-  loaded = true;
+  window.onhashchange = function() {
+    runScene(document.location.hash);
+  }
   /*var scene = parse(document.location.hash);
 
   return q($.getJSON('http://localhost:8080/game/game.json'))
@@ -30,7 +32,10 @@ Storysman.game = gameJson;
 
 
 
-Storysman.test = runScene
+Storysman.test = function() {
+  init();
+  runScene('');
+}
 
 
 

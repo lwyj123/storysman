@@ -126,12 +126,16 @@ const _outputContent = function (content) {
 };
 
 const _handleInternalLinks = function (contentElement) {
-  /*contentElement.find('a').click(function (event) {
+  let aList = document.querySelectorAll(`#${contentElement.id} a`)
+  contentElement.addEventListener('click', function (event) {
     event.preventDefault();
-    var hash = '#' + gistId + '/' + $(this).attr('href');
-    runScene(hash);
-    window.history.pushState(null, null, document.location.pathname + hash);
-  });*/
+    if(event.target.tagName == 'A') {
+      let sceneName = event.target.attributes.href.value
+      var hash = '#' + sceneName;
+      window.location = hash
+      //window.history.pushState(null, null, document.location.pathname + hash);
+    }
+  });
   return Promise.resolve;
 };
 
