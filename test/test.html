@@ -10,6 +10,15 @@
 
   <script src="../dist/app.js"></script>
   <script type="text/javascript">
+    let testModule = {
+      'beforeInit': function() {
+        console.log('before init');
+      },
+      'afterInit': function() {
+        console.log('after init');
+      }
+    }
+    Storysman.register(testModule);
     Storysman.init();
   </script>
 </body>

@@ -1,6 +1,7 @@
-import gameJson from 'game/game.json'
+import gameJson from 'game/game.json';
 
-import { runScene } from './scene.js'
+import { runScene } from './scene.js';
+import smc from './module.js';
 
 class Storysman {
   constructor(name, age) {
@@ -16,13 +17,17 @@ class Storysman {
 var init = function () {
   window.onhashchange = function() {
     runScene(document.location.hash);
-  }
+  };
 };
 
 Storysman.init = function() {
   init();
   runScene('');
-}
+};
+
+Storysman.register = function(module) {
+  smc.register(module);
+};
 
 
 

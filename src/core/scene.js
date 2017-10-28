@@ -5,6 +5,8 @@ import yfm from 'yfm' // A simple to use YAML Front-Matter parsing and extractio
 import mustache from 'mustache' // a famous template
 import marked from 'marked' // a full-featured markdown parser and compiler.
 
+import module from './module'
+
 // load and render the scene by hash value
 const runScene = function(hash) {
   var scene = parse(hash);
@@ -28,9 +30,18 @@ const runScene = function(hash) {
 
 // load scene file by its filename
 const loadScene = function(scene) {
+  console.log(module);
   let promise = _getSceneContent(scene)
     .then(_extractYFM.bind(this, scene))
-    .then(_initScene);
+    .then((res) => {
+      module.notify('beforeInit');
+      return res;
+    })
+    .then(_initScene)
+    .then((res) => {
+      module.notify('afterInit');
+      return res;
+    })
   return promise
 }
 // render scene by its parsed object(extracted by yfm)
@@ -116,6 +127,7 @@ const _playTrack = function (parsed) {
   return Promise.resolve(parsed);
 };
 
+// update the state (using parsed object's state)
 const _updateGameState = function (parsed) {
   if(!window.state) {
     window.state = {};
@@ -124,6 +136,7 @@ const _updateGameState = function (parsed) {
   return parsed.content;
 };
 
+// render the Mustache template using "state"
 const _renderMustache = function (content) {
   return mustache.render(content, window.state);
 };
@@ -133,12 +146,14 @@ const _renderMarkdown = function (content) {
   return marked(content);
 };
 
+// reset the innerHTML of '#content'
 const _outputContent = function (content) {
   let elem = document.getElementById('content');
   elem.innerHTML = content
   return Promise.resolve(elem);
 };
 
+// redirect the 'a' tag's href to change the hash.
 const _handleInternalLinks = function (contentElement) {
   let aList = document.querySelectorAll(`#${contentElement.id} a`)
   contentElement.addEventListener('click', function (event) {
