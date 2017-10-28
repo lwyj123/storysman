@@ -7,11 +7,16 @@ import marked from 'marked' // a full-featured markdown parser and compiler.
 
 import module from './module'
 
+// store the middle value (scene, parsed)
+let sceneContext = {}
+
 // load and render the scene by hash value
 const runScene = function(hash) {
   var scene = parse(hash);
   let promise = Promise.resolve(scene);
-  // loadScene(scene) => parsed, renderScene(parsed) => undefined
+  
+  sceneContext.scene = scene;
+
   return promise.then(loadScene)
     .then(renderScene)
 
@@ -76,6 +81,7 @@ const _getSceneContent = function (scene) {
 const _extractYFM = function(scene, result) {
   // see the https://www.npmjs.com/package/yfm
   var parsed = yfm(result.data);
+  sceneContext.parsed = parsed;
   // clear the style before inject
   removeStyle();
   if (parsed.context.style !== undefined) {
@@ -158,11 +164,18 @@ const _handleInternalLinks = function (contentElement) {
   let aList = document.querySelectorAll(`#${contentElement.id} a`)
   contentElement.addEventListener('click', function (event) {
     event.preventDefault();
+    let sceneName = event.target.attributes.href.value
     if(event.target.tagName == 'A') {
-      let sceneName = event.target.attributes.href.value
-      var hash = '#' + sceneName;
-      window.location = hash
-      //window.history.pushState(null, null, document.location.pathname + hash);
+      if(sceneName.startsWith('@')) {
+        sceneContext.parsed.context.method[sceneName.slice(1)].call(null)
+
+        // TODO: use two-way binding or Rerender
+        
+      } else {
+        var hash = '#' + sceneName;
+        window.location = hash
+      }
+      
     }
   });
   return Promise.resolve;
