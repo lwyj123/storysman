@@ -1,5 +1,5 @@
-import Storysman from './core/core.js'
-import packageJson from '../package.json'
+import Storysman from './core/core.js';
+import packageJson from '../package.json';
 
 
 window.Storysman = Storysman;

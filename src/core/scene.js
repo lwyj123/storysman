@@ -1,14 +1,15 @@
-import config from 'config'
-import gameJson from 'game/game.json'
-import axios from 'axios'
-import yfm from 'yfm' // A simple to use YAML Front-Matter parsing and extraction Library
-import mustache from 'mustache' // a famous template
-import marked from 'marked' // a full-featured markdown parser and compiler.
+import config from 'config';
+import gameJson from 'game/game.json';
+import axios from 'axios';
+import yfm from 'yfm'; // A simple to use YAML Front-Matter parsing and extraction Library
+import mustache from 'mustache'; // a famous template
+import marked from 'marked'; // a full-featured markdown parser and compiler.
 
-import module from './module'
+import module from './module';
 
 // store the middle value (scene, parsed)
-let sceneContext = {}
+let sceneContext = {};
+let firstRender = true;
 
 // load and render the scene by hash value
 const runScene = function(hash) {
@@ -18,7 +19,7 @@ const runScene = function(hash) {
   sceneContext.scene = scene;
 
   return promise.then(loadScene)
-    .then(renderScene)
+    .then(renderScene);
 
   function parse (hash) {
     var path = hash.slice(1);
@@ -30,8 +31,8 @@ const runScene = function(hash) {
     }
 
     return scene;
-  };
-}
+  }
+};
 
 // load scene file by its filename
 const loadScene = function(scene) {
@@ -46,50 +47,60 @@ const loadScene = function(scene) {
     .then((res) => {
       module.notify('afterInit');
       return res;
-    })
-  return promise
-}
+    });
+  return promise;
+};
 // render scene by its parsed object(extracted by yfm)
-const renderScene = function(parsed) {
-  let promise = _playTrack(parsed)
+const renderScene = function(sceneContext) {
+  let promise = _playTrack(sceneContext)
     .then(_updateGameState)
     .then(_renderMustache)
     .then(_renderMarkdown)
     .then(_outputContent)
-    .then(_handleInternalLinks)
+    .then((elem) => {
+      if(firstRender) {
+        firstRender = false;
+        return _handleInternalLinks(elem);
+      } else {
+        return Promise.resolve();
+      }
+    })
     .then(()=>{
 
-    })
+    });
   return promise;
-}
+};
 
 
 /*
 ****Load part
 */
 const _getSceneContent = function (scene) {
-  let fileName = `${scene}.markdown`
+  let fileName = `${scene}.markdown`;
   //var file = gameJson[files][fileName];
 
 
   let fileURL = '../' + config.baseAddress + '/' + fileName;
 
-  return axios.get(fileURL)
+  return axios.get(fileURL);
 };
 
 // extract scene style from scene file's content
 const _extractYFM = function(scene, result) {
   // see the https://www.npmjs.com/package/yfm
   var parsed = yfm(result.data);
-  sceneContext.parsed = parsed;
+  sceneContext = {
+    ...sceneContext,
+    ...parsed
+  };
   // clear the style before inject
   removeStyle();
-  if (parsed.context.style !== undefined) {
-    injectSceneStyle(scene, parsed.context.style);
+  if (sceneContext.context.style !== undefined) {
+    injectSceneStyle(scene, sceneContext.context.style);
   }
   function removeStyle() {
     let head = document.getElementsByTagName('head')[0];
-    let sceneStyles = []
+    let sceneStyles = [];
     for(let node of head.children) {
       if(node.tagName === 'STYLE' && node.id.match(/-style$/)) {
         sceneStyles.push(node);
@@ -106,22 +117,22 @@ const _extractYFM = function(scene, result) {
     style.type = 'text/css';
     style.innerHTML = content;
     head.appendChild(style);
-  };
-  return Promise.resolve(parsed);
-}
+  }
+  return Promise.resolve(sceneContext);
+};
 
 // run init function of the scene file
-const _initScene = function(parsed) {
-  if (parsed.context.init !== undefined) {
-    parsed.context.init();
+const _initScene = function(sceneContext) {
+  if (sceneContext.context.init !== undefined) {
+    sceneContext.context.init();
   }
-  return Promise.resolve(parsed);
-}
+  return Promise.resolve(sceneContext);
+};
 
 /*
 ****Render part
 */
-const _playTrack = function (parsed) {
+const _playTrack = function (sceneContext) {
   // play BGM
   /*if (parsed.context.track !== undefined) {
     if (currentTrack !== undefined && !currentTrack.paused) {
@@ -130,16 +141,19 @@ const _playTrack = function (parsed) {
       playSceneTrack(parsed.context.track);
     }
   }*/
-  return Promise.resolve(parsed);
+  return Promise.resolve(sceneContext);
 };
 
 // update the state (using parsed object's state)
-const _updateGameState = function (parsed) {
+const _updateGameState = function (sceneContext) {
   if(!window.state) {
     window.state = {};
   }
-  Object.assign(window.state, parsed.context.state);
-  return parsed.content;
+  window.state = {
+    ...window.state,
+    ...sceneContext.context.state
+  };
+  return sceneContext.content;
 };
 
 // render the Mustache template using "state"
@@ -155,25 +169,26 @@ const _renderMarkdown = function (content) {
 // reset the innerHTML of '#content'
 const _outputContent = function (content) {
   let elem = document.getElementById('content');
-  elem.innerHTML = content
+  elem.innerHTML = content;
   return Promise.resolve(elem);
 };
 
 // redirect the 'a' tag's href to change the hash.
 const _handleInternalLinks = function (contentElement) {
-  let aList = document.querySelectorAll(`#${contentElement.id} a`)
+  // let aList = document.querySelectorAll(`#${contentElement.id} a`);
   contentElement.addEventListener('click', function (event) {
     event.preventDefault();
-    let sceneName = event.target.attributes.href.value
+    let sceneName = event.target.attributes.href.value;
     if(event.target.tagName == 'A') {
       if(sceneName.startsWith('@')) {
-        sceneContext.parsed.context.method[sceneName.slice(1)].call(null)
-
+        sceneContext.context.method[sceneName.slice(1)].call(null);
         // TODO: use two-way binding or Rerender
-        
+        // NOTICE: 可以考虑每次执行方法或者值有变动的时候触发一个notify方法，这个方法可以使用节流来优化性能
+        console.log(sceneContext);
+        renderScene(sceneContext);
       } else {
         var hash = '#' + sceneName;
-        window.location = hash
+        window.location = hash;
       }
       
     }
@@ -183,4 +198,4 @@ const _handleInternalLinks = function (contentElement) {
 
 export {
   runScene
-}
+};

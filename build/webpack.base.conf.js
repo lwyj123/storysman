@@ -12,7 +12,9 @@ module.exports = {
     },
     devtool: 'source-map',
     devServer: {
-        contentBase: './'
+        contentBase: './',
+        open: true,
+        openPage: 'test/test.html'
     },
     output: {
         path: path.resolve(__dirname, '../dist'),

@@ -22,7 +22,7 @@ var init = function () {
 
 Storysman.init = function() {
   init();
-  runScene('');
+  runScene(document.location.hash);
 };
 
 Storysman.register = function(module) {
