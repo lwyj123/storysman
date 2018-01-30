@@ -1,5 +1,6 @@
 var path = require('path');
 var config = require('../config');
+const webpack = require('webpack');
 
 function resolve(dir) {
     return path.join(__dirname, '..', dir)
@@ -14,8 +15,13 @@ module.exports = {
     devServer: {
         contentBase: './',
         open: true,
+        hot: true,
         openPage: 'test/test.html'
     },
+    plugins: [
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.NamedModulesPlugin(), // 更新组件时在控制台输出组件的路径而不是数字ID，用在开发模式
+    ],
     output: {
         path: path.resolve(__dirname, '../dist'),
         filename: '[name].js',
