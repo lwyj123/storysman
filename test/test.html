@@ -10,16 +10,11 @@
 
   <script src="../dist/app.js"></script>
   <script type="text/javascript">
-    let testModule = {
-      'beforeInit': function() {
-        console.log('before init');
-      },
-      'afterInit': function() {
-        console.log('after init');
-      }
-    }
-    let lw = new Storysman()
-    lw.register(testModule);
+    let lw = new Storysman({
+      modules: [
+        'music-player'
+      ]
+    })
     lw.init();
   </script>
 </body>

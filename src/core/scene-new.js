@@ -4,7 +4,6 @@ import axios from 'axios';
 import yfm from 'yfm'; // A simple to use YAML Front-Matter parsing and extraction Library
 
 import Emitter from './emitter';
-import modules from './module';
 
 let debug = logger('scene');
 
@@ -37,19 +36,23 @@ class Scene {
     }
   }
 
-  async init() {
+  async init(quill) {
     if(Scene.scenes[this.file]) {
       debug.log('already inited');
       return;
     }
+    this.setQuill(quill);
+
     this.sceneContent = await _getSceneContent(this.file);
     debug.log('sceneContent: ', this.sceneContent);
     this.yfmParsed = this._extractYFM();
     debug.log('yfmParsed: ', this.yfmParsed);
-    modules.notify("beforeInit");
+    this.quill.emitter.emit(Emitter.events.SCENE_BEFORE_INIT, Emitter.sources.SILENT);
     this._initScene();
-    modules.notify("afterInit");
+    this.quill.emitter.emit(Emitter.events.SCENE_AFTER_INIT, Emitter.sources.SILENT);
     Scene.scenes[this.file] = this;
+
+    this.quill.render(this);
   }
 
   setState(newState, newGlobalState) {

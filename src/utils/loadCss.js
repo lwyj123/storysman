@@ -1,4 +1,4 @@
-import randomString from './randomString'
+import randomString from './randomString';
 
 const loadCss = function(options) {
   let _options = {
@@ -7,7 +7,7 @@ const loadCss = function(options) {
     mounted: () => {},
     loaded: () => {},
     id: randomString({length: 8})
-  }
+  };
   let option = Object.assign({}, _options, options);
 
   // TODO: add url validator
@@ -30,9 +30,9 @@ const loadCss = function(options) {
   } else {
     setTimeout(() => {
       _pollCss(node, option.loaded, 0);
-    }, 0)
+    }, 0);
   }
-}
+};
 
 // for detect css onloaded or not(Old WebKit, Old Firefox)
 function _pollCss(node, callback, step) {
@@ -62,11 +62,11 @@ function _pollCss(node, callback, step) {
   if(isLoaded) {
     setTimeout(function() {
       callback.call(null);
-    }, 10)
+    }, 10);
   } else {
     setTimeout(function() {
-      _pollCss(node, callback, step)
-    }, 10)
+      _pollCss(node, callback, step);
+    }, 10);
   }
 }
 

@@ -22,7 +22,10 @@ class Emitter extends EventEmitter {
 }
 
 Emitter.events = {
+  SCENE_BEFORE_INIT    : 'scene-before-init',
+  SCENE_AFTER_INIT     : 'scene-after-init',
   SCENE_STATE_CHANGE   : 'scene-state-change',
+  
 };
 Emitter.sources = {
   API    : 'api',
