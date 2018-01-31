@@ -1,5 +1,5 @@
 let levels = ['error', 'warn', 'log', 'info'];
-let level = 'warn';
+let level = 'log';
 
 function debug(method, ...args) {
   if (levels.indexOf(method) <= levels.indexOf(level)) {

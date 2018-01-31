@@ -2,6 +2,7 @@ import logger from './logger';
 import mustache from 'mustache'; // a famous template
 import marked from 'marked'; // a full-featured markdown parser and compiler.
 import Scene from './scene-new';
+import Emitter from './emitter';
 
 let debug = logger('quill');
 
@@ -16,6 +17,7 @@ class Quill {
       ...Quill.DEFAULTS,
       ...options
     };
+    this.emitter = this.options.emitter;
     this.container = document.querySelector(this.options.container);
     if (this.container == null) {
       return debug.error('Invalid Quill container', this.options.container);
@@ -24,6 +26,12 @@ class Quill {
     this.container.innerHTML = '';
     this.container.__quill = this;
     this.domEvents = {};
+    this.currentScene = null;
+
+    // state变更自动刷新
+    this.emitter.on(Emitter.events.SCENE_STATE_CHANGE, (source, newState) => {
+      this.render(this.currentScene);
+    });
   }
   render(scene) {
     removeStyle();
@@ -33,6 +41,10 @@ class Quill {
     }
     this.container.innerHTML = marked(mustache.render(scene.yfmParsed.content, scene.state));
     this._bindReact(scene);
+
+    // 记录当前scene
+    this.currentScene = scene;
+    scene.setQuill(this);
 
     function removeStyle() {
       let head = document.getElementsByTagName('head')[0];
@@ -58,6 +70,7 @@ class Quill {
 
   // 绑定交互事件
   _bindReact(scene) {
+    const self = this;
     this.domEvents['react'] = function (event) {
       event.preventDefault();
       let name = event.target.attributes.href.value;
@@ -67,6 +80,7 @@ class Quill {
           scene.yfmParsed.context.method[name.slice(1)].call(null, scene.state, Scene.globalState);
           // TODO: use two-way binding or Rerender
           // NOTICE: 可以考虑每次执行方法或者值有变动的时候触发一个notify方法，这个方法可以使用节流来优化性能
+          self.emitter.emit(Emitter.events.SCENE_STATE_CHANGE, Emitter.sources.SILENT, scene.state);
         } else {
           var hash = '#' + name;
           window.location = hash;

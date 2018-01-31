@@ -3,6 +3,7 @@ import config from 'config';
 import axios from 'axios';
 import yfm from 'yfm'; // A simple to use YAML Front-Matter parsing and extraction Library
 
+import Emitter from './emitter';
 import modules from './module';
 
 let debug = logger('scene');
@@ -24,6 +25,10 @@ class Scene {
     this.sceneContent = null;
     this.yfmParsed = null;
     this.state = {};
+
+    // 最初设置quill只是为了获取emitter，后面看看有没有什么改动吧。
+    this.quill = null;
+
     if(Scene.scenes[this.file]) {
       debug.log('already inited');
       this.sceneContent = Scene.scenes[this.file].sceneContent;
@@ -61,6 +66,9 @@ class Scene {
       };
     }
     // emitter.XXX
+  }
+  setQuill(quill) {
+    this.quill = quill;
   }
 
   _initScene() {
