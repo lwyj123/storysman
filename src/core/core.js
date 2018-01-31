@@ -21,7 +21,7 @@ class Storysman {
     currentScene.init().then((res) => {
       this.quill.render(currentScene);
     });
-    window.onhashchange = function() {
+    window.onhashchange = () => {
       let filename = document.location.hash.replace('#', '');
       let currentScene = new Scene(filename);
       currentScene.init().then((res) => {
