@@ -22,6 +22,9 @@ class Emitter extends EventEmitter {
 }
 
 Emitter.events = {
+  STORYSMAN_INITED     : 'storysman-inited',
+  STORYSMAN_MOUNTED    : 'storysman-mounted',
+  MODULE_MOUNTED       : 'module-mounted',
   SCENE_BEFORE_INIT    : 'scene-before-init',
   SCENE_AFTER_INIT     : 'scene-after-init',
   SCENE_STATE_CHANGE   : 'scene-state-change',

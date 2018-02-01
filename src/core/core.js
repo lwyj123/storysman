@@ -36,10 +36,12 @@ class Storysman {
       currentScene.init(this.quill).then((res) => {
       });
     };
+    this.emitter.emit(Emitter.events.STORYSMAN_INITED, Emitter.sources.SILENT);
   }
   register(module, options) {
     import(`../modules/${module}`).then((Module) => {
       this.modules[module] = new Module.default(this, options);
+      this.emitter.emit(Emitter.events.MODULE_MOUNTED, Emitter.sources.SILENT, module);
     });
   }
 }

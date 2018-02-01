@@ -17,6 +17,7 @@ let debug = logger('module:music-player');
 class MusicPlayer extends Module {
   constructor(storysman, options) {
     super(storysman, options);
+    this.name = "music-player";
     // for test
     this.options = {
       container: 'body'
@@ -46,13 +47,19 @@ class MusicPlayer extends Module {
     this.audioDom.src = songUrl;
   }
 
+  moduleMounted(moduleName) {
+    if(moduleName !== this.name) {
+      return;
+    }
+    debug.log('musicplayer mounted');
+    this.audioDom.src = "http://localhost:8080/game/music/200052226565.mp3";
+    this.play();
+  }
   beforeInit() {
     debug.log('musicplayer before init');
   }
   afterInit() {
     debug.log('musicplayer after init');
-    this.audioDom.src = "http://localhost:8080/game/music/200052226565.mp3";
-    this.play();
   }
 }
 
