@@ -13,6 +13,12 @@
       "language": "Markdown",
       "truncated": false
     },
+    "music.markdown": {
+      "filename": "music.markdown",
+      "type": "text/plain",
+      "language": "Markdown",
+      "truncated": false      
+    },
     "style.css": {
       "filename": "style.css",
       "type": "text/css",

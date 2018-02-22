@@ -36,7 +36,7 @@ const runScene = function(hash) {
 
 // load scene file by its filename
 const loadScene = function(scene) {
-  console.log(module);
+  // console.log(module);
   let promise = _getSceneContent(scene)
     .then(_extractYFM.bind(this, scene))
     .then((res) => {
@@ -184,7 +184,7 @@ const _handleInternalLinks = function (contentElement) {
         sceneContext.context.method[sceneName.slice(1)].call(null);
         // TODO: use two-way binding or Rerender
         // NOTICE: 可以考虑每次执行方法或者值有变动的时候触发一个notify方法，这个方法可以使用节流来优化性能
-        console.log(sceneContext);
+        // console.log(sceneContext);
         renderScene(sceneContext);
       } else {
         var hash = '#' + sceneName;

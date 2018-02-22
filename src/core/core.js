@@ -1,5 +1,8 @@
 import gameJson from 'game/game.json';
 
+import { parseComponent } from 'vue-template-compiler';
+import indexVue from '../../game/index.vue';
+
 import Scene from './scene-new.js';
 import Quill from './quill';
 import Emitter from './emitter';
@@ -23,6 +26,8 @@ class Storysman {
   }
 
   init() {
+    const test = parseComponent(indexVue);
+    console.log(test);
     // 由于加载模块是异步的，暂时先这样trick一下
     setTimeout(() => {
       document.location.hash = '';

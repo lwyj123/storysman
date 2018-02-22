@@ -32,8 +32,14 @@
     "babel-loader": "^7.1.2",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
+    "css-loader": "^0.28.9",
     "eslint": "^4.8.0",
     "json-loader": "^0.5.7",
+    "node-sass": "^4.7.2",
+    "raw-loader": "^0.5.1",
+    "sass-loader": "^6.0.6",
+    "vue": "^2.5.13",
+    "vue-loader": "^14.1.1",
     "webpack": "^3.7.1",
     "webpack-dev-server": "^2.11.1"
   },
@@ -41,6 +47,7 @@
     "axios": "^0.16.2",
     "marked": "^0.3.6",
     "mustache": "^2.3.0",
+    "vue-template-compiler": "^2.5.13",
     "yfm": "^0.2.0"
   }
 }

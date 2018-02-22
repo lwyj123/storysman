@@ -27,31 +27,26 @@ class Scene {
 
     // 最初设置quill只是为了获取emitter，后面看看有没有什么改动吧。
     this.quill = null;
-
-    if(Scene.scenes[this.file]) {
-      debug.log('already inited');
-      this.sceneContent = Scene.scenes[this.file].sceneContent;
-      this.yfmParsed = Scene.scenes[this.file].yfmParsed;
-      this.state = Scene.scenes[this.file].state;
-    }
   }
 
   async init(quill) {
-    if(Scene.scenes[this.file]) {
-      debug.log('already inited');
-      return;
-    }
     this.setQuill(quill);
-
-    this.sceneContent = await _getSceneContent(this.file);
-    debug.log('sceneContent: ', this.sceneContent);
-    this.yfmParsed = this._extractYFM();
-    debug.log('yfmParsed: ', this.yfmParsed);
-    this.quill.emitter.emit(Emitter.events.SCENE_BEFORE_INIT, Emitter.sources.SILENT);
-    this._initScene();
-    this.quill.emitter.emit(Emitter.events.SCENE_AFTER_INIT, Emitter.sources.SILENT);
-    Scene.scenes[this.file] = this;
-
+    if(Scene.scenes[this.file]) {
+      this.sceneContent = Scene.scenes[this.file].sceneContent;
+      this.yfmParsed = Scene.scenes[this.file].yfmParsed;
+      this.state = Scene.scenes[this.file].state;
+      debug.log('already inited');
+    } else {
+      this.sceneContent = await _getSceneContent(this.file);
+      debug.log('sceneContent: ', this.sceneContent);
+      this.yfmParsed = this._extractYFM();
+      debug.log('yfmParsed: ', this.yfmParsed);
+      this.quill.emitter.emit(Emitter.events.SCENE_BEFORE_INIT, Emitter.sources.SILENT);
+      this._initScene();
+      this.quill.emitter.emit(Emitter.events.SCENE_AFTER_INIT, Emitter.sources.SILENT);
+      Scene.scenes[this.file] = this;
+    }
+    debugger;
     this.quill.render(this);
   }
 

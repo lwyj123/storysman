@@ -49,7 +49,11 @@ module.exports = {
             {
                 test: /\.json$/,
                 use: 'json-loader',
-            }
+            },
+            {
+                test: /\.vue$/,
+                use: 'raw-loader'
+            },
             /*{
                 test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
                 loader: 'url-loader',
