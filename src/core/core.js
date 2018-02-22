@@ -3,7 +3,7 @@ import gameJson from 'game/game.json';
 import { parseComponent } from 'vue-template-compiler';
 import indexVue from '../../game/index.vue';
 
-import Scene from './scene-new.js';
+import Scene from './scene';
 import Quill from './quill';
 import Emitter from './emitter';
 

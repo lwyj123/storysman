@@ -10,7 +10,7 @@
 // };
 
 import logger from '../core/logger';
-import Module from '../core/module-new';
+import Module from '../core/module';
 
 let debug = logger('module:music-player');
 

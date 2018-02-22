@@ -1,201 +1,91 @@
+import logger from './logger';
 import config from 'config';
-import gameJson from 'game/game.json';
 import axios from 'axios';
 import yfm from 'yfm'; // A simple to use YAML Front-Matter parsing and extraction Library
-import mustache from 'mustache'; // a famous template
-import marked from 'marked'; // a full-featured markdown parser and compiler.
 
-import module from './module';
+import Emitter from './emitter';
 
-// store the middle value (scene, parsed)
-let sceneContext = {};
-let firstRender = true;
+let debug = logger('scene');
 
-// load and render the scene by hash value
-const runScene = function(hash) {
-  var scene = parse(hash);
-  let promise = Promise.resolve(scene);
-  
-  sceneContext.scene = scene;
-
-  return promise.then(loadScene)
-    .then(renderScene);
-
-  function parse (hash) {
-    var path = hash.slice(1);
-    var segments = path.split('/');
-    var scene = segments.join('/');
-
-    if (scene === '') {
-      return 'index';
-    }
-
-    return scene;
-  }
-};
-
-// load scene file by its filename
-const loadScene = function(scene) {
-  // console.log(module);
-  let promise = _getSceneContent(scene)
-    .then(_extractYFM.bind(this, scene))
-    .then((res) => {
-      module.notify('beforeInit');
-      return res;
-    })
-    .then(_initScene)
-    .then((res) => {
-      module.notify('afterInit');
-      return res;
-    });
-  return promise;
-};
-// render scene by its parsed object(extracted by yfm)
-const renderScene = function(sceneContext) {
-  let promise = _playTrack(sceneContext)
-    .then(_updateGameState)
-    .then(_renderMustache)
-    .then(_renderMarkdown)
-    .then(_outputContent)
-    .then((elem) => {
-      if(firstRender) {
-        firstRender = false;
-        return _handleInternalLinks(elem);
-      } else {
-        return Promise.resolve();
-      }
-    })
-    .then(()=>{
-
-    });
-  return promise;
-};
-
-
-/*
-****Load part
-*/
-const _getSceneContent = function (scene) {
+const _getSceneContent = function(scene) {
   let fileName = `${scene}.markdown`;
   //var file = gameJson[files][fileName];
 
+  let fileURL = `../${config.baseAddress}/${fileName}`;
 
-  let fileURL = '../' + config.baseAddress + '/' + fileName;
-
-  return axios.get(fileURL);
-};
-
-// extract scene style from scene file's content
-const _extractYFM = function(scene, result) {
-  // see the https://www.npmjs.com/package/yfm
-  var parsed = yfm(result.data);
-  sceneContext = {
-    ...sceneContext,
-    ...parsed
-  };
-  // clear the style before inject
-  removeStyle();
-  if (sceneContext.context.style !== undefined) {
-    injectSceneStyle(scene, sceneContext.context.style);
-  }
-  function removeStyle() {
-    let head = document.getElementsByTagName('head')[0];
-    let sceneStyles = [];
-    for(let node of head.children) {
-      if(node.tagName === 'STYLE' && node.id.match(/-style$/)) {
-        sceneStyles.push(node);
-      }
-    }
-    for(let node of sceneStyles) {
-      head.removeChild(node);
-    }
-  }
-  function injectSceneStyle(scene, content) {
-    let head = document.getElementsByTagName('head')[0];
-    let style = document.createElement('style');
-    style.id = scene + '-style';
-    style.type = 'text/css';
-    style.innerHTML = content;
-    head.appendChild(style);
-  }
-  return Promise.resolve(sceneContext);
-};
-
-// run init function of the scene file
-const _initScene = function(sceneContext) {
-  if (sceneContext.context.init !== undefined) {
-    sceneContext.context.init();
-  }
-  return Promise.resolve(sceneContext);
-};
-
-/*
-****Render part
-*/
-const _playTrack = function (sceneContext) {
-  // play BGM
-  /*if (parsed.context.track !== undefined) {
-    if (currentTrack !== undefined && !currentTrack.paused) {
-      $(currentTrack).animate({ volume: 0 }, 1000, playSceneTrack.bind(this, parsed.context.track));
-    } else {
-      playSceneTrack(parsed.context.track);
-    }
-  }*/
-  return Promise.resolve(sceneContext);
-};
-
-// update the state (using parsed object's state)
-const _updateGameState = function (sceneContext) {
-  if(!window.state) {
-    window.state = {};
-  }
-  window.state = {
-    ...window.state,
-    ...sceneContext.context.state
-  };
-  return sceneContext.content;
-};
-
-// render the Mustache template using "state"
-const _renderMustache = function (content) {
-  return mustache.render(content, window.state);
-};
-
-const _renderMarkdown = function (content) {
-  // render markdown and output html code
-  return marked(content);
-};
-
-// reset the innerHTML of '#content'
-const _outputContent = function (content) {
-  let elem = document.getElementById('content');
-  elem.innerHTML = content;
-  return Promise.resolve(elem);
-};
-
-// redirect the 'a' tag's href to change the hash.
-const _handleInternalLinks = function (contentElement) {
-  // let aList = document.querySelectorAll(`#${contentElement.id} a`);
-  contentElement.addEventListener('click', function (event) {
-    event.preventDefault();
-    let sceneName = event.target.attributes.href.value;
-    if(event.target.tagName == 'A') {
-      if(sceneName.startsWith('@')) {
-        sceneContext.context.method[sceneName.slice(1)].call(null);
-        // TODO: use two-way binding or Rerender
-        // NOTICE: 可以考虑每次执行方法或者值有变动的时候触发一个notify方法，这个方法可以使用节流来优化性能
-        // console.log(sceneContext);
-        renderScene(sceneContext);
-      } else {
-        var hash = '#' + sceneName;
-        window.location = hash;
-      }
-      
-    }
+  return axios.get(fileURL).then(res => {
+    return res.data;
   });
-  return Promise.resolve;
 };
 
-export {
-  runScene
-};
+class Scene {
+  constructor(scenefile) {
+    this.file = scenefile;
+    this.descriptor = null;
+    this.sceneContent = null;
+    this.yfmParsed = null;
+    this.state = {};
+
+    // 最初设置quill只是为了获取emitter，后面看看有没有什么改动吧。
+    this.quill = null;
+  }
+
+  async init(quill) {
+    const cache = Scene.scenes[this.file];
+    this.setQuill(quill);
+    if(cache) {
+      this.descriptor = cache.descriptor;
+      this.sceneContent = cache.sceneContent;
+      this.yfmParsed = cache.yfmParsed;
+      this.state = cache.state;
+      debug.log('already inited');
+    } else {
+      this.sceneContent = await _getSceneContent(this.file);
+      debug.log('sceneContent: ', this.sceneContent);
+      this.yfmParsed = this._extractYFM();
+      debug.log('yfmParsed: ', this.yfmParsed);
+      this.quill.emitter.emit(Emitter.events.SCENE_BEFORE_INIT, Emitter.sources.SILENT);
+      this._initScene();
+      this.quill.emitter.emit(Emitter.events.SCENE_AFTER_INIT, Emitter.sources.SILENT);
+      Scene.scenes[this.file] = this;
+    }
+    debugger;
+    this.quill.render(this);
+  }
+
+  setState(newState, newGlobalState) {
+    if(newState) {
+      this.state = {
+        ...this.state,
+        ...newState
+      };
+    }
+    if(newGlobalState) {
+      this.globalState = {
+        ...this.globalState,
+        ...newGlobalState
+      };
+    }
+    // emitter.XXX
+  }
+  setQuill(quill) {
+    this.quill = quill;
+  }
+
+  _initScene() {
+    if (this.yfmParsed.context.init !== undefined) {
+      this.yfmParsed.context.init(this.state, Scene.globalState);
+    }
+  }
+
+  _extractYFM() {
+    // see the https://www.npmjs.com/package/yfm
+    var parsed = yfm(this.sceneContent);
+    return parsed;
+  }
+}
+
+Scene.globalState = {};
+Scene.scenes = {};
+
+export default Scene;

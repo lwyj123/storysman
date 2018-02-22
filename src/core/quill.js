@@ -1,7 +1,7 @@
 import logger from './logger';
 import mustache from 'mustache'; // a famous template
 import marked from 'marked'; // a full-featured markdown parser and compiler.
-import Scene from './scene-new';
+import Scene from './scene';
 import Emitter from './emitter';
 
 let debug = logger('quill');
