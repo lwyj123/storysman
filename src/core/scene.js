@@ -2,6 +2,7 @@ import logger from './logger';
 import config from 'config';
 import axios from 'axios';
 import yfm from 'yfm'; // A simple to use YAML Front-Matter parsing and extraction Library
+import { parseComponent } from 'vue-template-compiler';
 
 import Emitter from './emitter';
 
@@ -40,6 +41,10 @@ class Scene {
       this.state = cache.state;
       debug.log('already inited');
     } else {
+      
+      this.descriptor = await import(`../../game/${this.file}.vue`);
+      this.descriptor = parseComponent(this.descriptor);
+      debug.log('descriptor: ', this.descriptor);
       this.sceneContent = await _getSceneContent(this.file);
       debug.log('sceneContent: ', this.sceneContent);
       this.yfmParsed = this._extractYFM();
