@@ -28,7 +28,7 @@ module.exports = {
         filename: '[name].js',
     },
     resolve: {
-        extensions: ['.js', '.json'],
+        extensions: ['.js', '.ts', '.json'],
         alias: {
             'game': resolve('game'),
             'config': resolve('config')
@@ -43,7 +43,7 @@ module.exports = {
         rules: [
             {
                 test: /\.js$/,
-                loader: 'babel-loader?cacheDirectory',
+                loader: 'babel-loader',
                 include: [resolve('src'), resolve('test')],
             },
             {
@@ -52,7 +52,7 @@ module.exports = {
             },
             {
                 test: /\.vue$/,
-                use: 'raw-loader'
+                use: 'vue-loader'
             },
             /*{
                 test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,

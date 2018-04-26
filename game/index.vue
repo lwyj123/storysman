@@ -7,12 +7,16 @@
 </template>
 
 <script>
+import component from './component.vue'
 export default {
   init(state, global) {
     state.city = state.city + 1 || 1;
   },
   visit(state, global) {
     state.city++;
+  },
+  componentTest() {
+    component.test()
   }
 }
 </script>
@@ -23,28 +27,3 @@ export default {
     color: #eee;
   }
 </style>
-
-
-
----
-init: !!js/function |
-  function(state, global) {
-    state.city = state.city + 1 || 1;
-  }
-method: 
-  visit: !!js/function |
-    function(state, global) {
-      state.city++;
-    }
----
-
-这是一个scene操纵module的例子
-
-你已经来过 {{city}} 次了.
-[暂停](@pause)
-[播放](@play)
-[上一首](@prevSong)
-[下一首](@nextSong)
-[设置下一首歌的url](@setUrl)
-
-Go [back](index).
