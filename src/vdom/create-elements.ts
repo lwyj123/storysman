@@ -2,10 +2,10 @@
 /* @flow */
 
 import config from '../config'
-import VNode, { createEmptyVNode } from './vnode'
+import VNode, { createEmptyVNode, VNodeData } from './vnode'
 import { createComponent } from './create-component'
 import { traverse } from '../observer/traverse'
-// import { Component } from './Component'
+import { Component } from './Component'
 
 import {
   isDef,
@@ -52,7 +52,7 @@ export function _createElement (
   children?: any,
   normalizationType?: number
 ): VNode | Array<VNode> {
-  if (isDef(data) && isDef((data: any).__ob__)) {
+  if (isDef(data) && isDef((data as any).__ob__)) {
     return createEmptyVNode()
   }
   // object syntax in v-bind
@@ -77,10 +77,9 @@ export function _createElement (
   } else if (normalizationType === SIMPLE_NORMALIZE) {
     children = simpleNormalizeChildren(children)
   }
-  let vnode, ns
+  let vnode
   if (typeof tag === 'string') {
     let Ctor
-    ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag)
     if (config.isReservedTag(tag)) {
       // platform built-in elements
       vnode = new VNode(
@@ -106,7 +105,6 @@ export function _createElement (
   if (Array.isArray(vnode)) {
     return vnode
   } else if (isDef(vnode)) {
-    if (isDef(ns)) applyNS(vnode, ns)
     if (isDef(data)) registerDeepBindings(data)
     return vnode
   } else {
@@ -114,25 +112,7 @@ export function _createElement (
   }
 }
 
-function applyNS (vnode, ns, force) {
-  vnode.ns = ns
-  if (vnode.tag === 'foreignObject') {
-    // use default namespace inside foreignObject
-    ns = undefined
-    force = true
-  }
-  if (isDef(vnode.children)) {
-    for (let i = 0, l = vnode.children.length; i < l; i++) {
-      const child = vnode.children[i]
-      if (isDef(child.tag) && (
-        isUndef(child.ns) || (isTrue(force) && child.tag !== 'svg'))) {
-        applyNS(child, ns, force)
-      }
-    }
-  }
-}
-
-// ref #5318
+// ref #5318 
 // necessary to ensure parent re-render when deep bindings like :style and
 // :class are used on slot nodes
 function registerDeepBindings (data) {

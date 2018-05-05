@@ -142,6 +142,7 @@ export default class VNode {
       render: Function;
       staticRenderFns: Function[];
     };
+    is?: any; // hack
     directives?: VNodeDirective[];
     keepAlive?: boolean;
   }

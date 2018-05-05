@@ -9,7 +9,7 @@ type DefaultComputed = { [key: string]: any };
 export declare type Component<Data=DefaultData<never>, Methods=DefaultMethods<never>, Computed=DefaultComputed, Props=DefaultProps> =
 | typeof Vue
 | FunctionalComponentOptions<Props>
-| ComponentOptions<never, Data, Methods, Computed, Props> 
+| ComponentOptions<never, Data, Methods, Computed, Props>
 
 export type Accessors<T> = {
   [K in keyof T]: (() => T[K]) | ComputedOptions<T[K]>
@@ -105,3 +105,4 @@ export interface ComputedOptions<T> {
   set?(value: T): void;
   cache?: boolean;
 }
+
